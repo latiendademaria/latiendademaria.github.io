@@ -128,10 +128,11 @@ export function createDemoApi(): Api {
         if (p.stock - p.reserved < l.qty) throw new Error(`Lo sentimos, ya no quedan suficientes unidades de "${p.title}".`);
         return { p, qty: l.qty };
       });
-      items.forEach(({ p, qty }) => { p.stock -= qty; });
       const subtotal = items.reduce((n, { p, qty }) => n + p.price_cents * qty, 0);
       const st = s.settings;
       const shipping = st.free_shipping_from_cents != null && subtotal >= st.free_shipping_from_cents ? 0 : st.shipping_flat_cents;
+      if (subtotal + shipping < 50) throw new Error('El pedido mínimo es de 0,50 €. Añade algo más a la cesta.');
+      items.forEach(({ p, qty }) => { p.stock -= qty; });
       s.orders.unshift({
         id: uid(), status: 'paid',
         items: items.map(({ p, qty }) => ({ product_id: p.id, title: p.title, qty, unit_price_cents: p.price_cents, image: p.images[0] })),

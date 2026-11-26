@@ -18,6 +18,7 @@ function friendlyError(msg: string): string {
   }
   if (msg.includes('PRODUCT_NOT_FOUND')) return 'Uno de los productos ya no está disponible.';
   if (msg.includes('EMPTY_CART')) return 'El carrito está vacío.';
+  if (msg.includes('MIN_TOTAL')) return 'El pedido mínimo es de 0,50 €. Añade algo más a la cesta.';
   return 'No se ha podido iniciar el pago. Inténtalo de nuevo.';
 }
 
