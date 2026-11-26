@@ -63,15 +63,47 @@ function mailto(to: string) {
 }
 
 // ── Cinta superior ────────────────────────────────
+let ribbonTimer: number | undefined;
+let ribbonMsgs: string[] = [];
+
 function renderRibbon() {
   const free = settings?.free_shipping_from_cents;
   const ship = !settings ? 'Envíos a toda la península'
     : free != null ? `Envío gratis desde ${money(free)}`
     : settings.shipping_flat_cents === 0 ? 'Envío gratis' : `Envío a península por ${money(settings.shipping_flat_cents)}`;
-  const msgs = [ship, 'Hecho a mano en España', 'Piezas en pequeña tirada', 'Pago seguro con tarjeta, Apple Pay o Google Pay', 'Devoluciones en 14 días'];
-  // Dos mitades idénticas (la animación desplaza -50%); cada mitad repite el texto para cubrir pantallas anchas
-  const half = [...msgs, ...msgs].map((m) => `<span>${esc(m)}</span>`).join('');
-  $('#ribbon').innerHTML = `<div class="ribbon__group">${half}</div><div class="ribbon__group" aria-hidden="true">${half}</div>`;
+  ribbonMsgs = [ship, 'Hecho a mano en España', 'Piezas en pequeña tirada', 'Pago seguro con tarjeta, Apple Pay o Google Pay', 'Devoluciones en 14 días'];
+  layoutRibbon();
+}
+
+/** Construye la cinta a la medida de la pantalla */
+function layoutRibbon() {
+  const track = $('#ribbon');
+  clearInterval(ribbonTimer);
+  const span = (m: string) => `<span>${esc(m)}</span>`;
+
+  // "Reducir movimiento": sin desplazamiento, los mensajes se van alternando con un fundido
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let i = 0;
+    track.className = 'ribbon__track ribbon__track--fade';
+    track.innerHTML = span(ribbonMsgs[0]);
+    ribbonTimer = window.setInterval(() => {
+      const el = track.firstElementChild as HTMLElement;
+      el.classList.add('is-out');
+      setTimeout(() => { i = (i + 1) % ribbonMsgs.length; el.textContent = ribbonMsgs[i]; el.classList.remove('is-out'); }, 400);
+    }, 4000);
+    return;
+  }
+
+  // Desplazamiento: un grupo que cubra la pantalla y su copia (la animación mueve -50%).
+  // Sin copias de más: en móvil la capa animada queda pequeña (Safari no anima capas enormes).
+  track.className = 'ribbon__track';
+  track.innerHTML = `<div class="ribbon__group">${ribbonMsgs.map(span).join('')}</div>`;
+  const group = track.firstElementChild as HTMLElement;
+  const one = group.innerHTML;
+  while (group.scrollWidth < window.innerWidth && group.childElementCount < 40) group.insertAdjacentHTML('beforeend', one);
+  track.insertAdjacentHTML('beforeend', `<div class="ribbon__group" aria-hidden="true">${group.innerHTML}</div>`);
+  // Velocidad constante (~40 px/s) sea cual sea el ancho
+  track.style.setProperty('--ribbon-duration', `${Math.round(group.scrollWidth / 40)}s`);
 }
 
 // ── Contenido que depende de ajustes ──────────────
@@ -371,6 +403,9 @@ function bindEvents() {
   });
 
   window.addEventListener('hashchange', openFromHash);
+  let rz: number | undefined;
+  window.addEventListener('resize', () => { clearTimeout(rz); rz = window.setTimeout(layoutRibbon, 200); });
+  matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', layoutRibbon);
   // Al volver con "atrás" desde Stripe (página restaurada de caché): libera la reserva y refresca
   window.addEventListener('pageshow', async (e) => {
     if (!e.persisted) return;
