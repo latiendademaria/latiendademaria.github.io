@@ -139,8 +139,8 @@ function renderFilters() {
 function tagFor(p: Product) {
   const a = available(p);
   if (a === 0) return '<span class="tag tag--out">Agotado</span>';
-  if (p.stock === 1) return '<span class="tag tag--unique">Pieza única</span>';
-  if (a <= 2) return `<span class="tag tag--low">Quedan ${a}</span>`;
+  if (p.stock === 1) return '<span class="tag">Pieza única</span>';
+  if (a <= 2) return `<span class="tag tag--low">Últimas ${a}</span>`;
   return '';
 }
 
@@ -158,15 +158,20 @@ function renderGrid() {
   $('#grid').innerHTML = list.length
     ? list.map((p) => {
       const out = available(p) === 0;
-      return `<article class="card${out ? ' is-out' : ''}" data-open="${esc(p.slug)}" tabindex="0" role="button" aria-label="${esc(p.title)}, ${money(p.price_cents)}">
+      return `<article class="card${out ? ' is-out' : ''}" data-open="${esc(p.slug)}" tabindex="0" role="button" aria-label="${esc(p.title)}, ${money(p.price_cents)}${out ? ', agotado' : ''}">
         <div class="card__media">
           ${tagFor(p)}
           <img src="${esc(img(p))}" alt="" loading="lazy">
           ${p.images[1] ? `<img src="${esc(img(p, 1))}" alt="" loading="lazy">` : ''}
-          ${out ? '' : `<button class="card__add" data-add="${esc(p.id)}" aria-label="Añadir ${esc(p.title)} a la cesta">${icons.plus}</button>`}
+          ${out ? '' : `<button class="card__add" data-add="${esc(p.id)}" aria-label="Añadir ${esc(p.title)} a la cesta">
+            <span class="card__add-icon">${icons.plus}</span><span class="card__add-label">Añadir a la cesta</span>
+          </button>`}
         </div>
-        <div class="card__body"><h3 class="card__title">${esc(p.title)}</h3><span class="card__price">${money(p.price_cents)}</span></div>
-        <div class="card__cat">${esc(catName(p.category_id))}</div>
+        <div class="card__info">
+          ${catName(p.category_id) ? `<span class="card__cat">${esc(catName(p.category_id))}</span>` : ''}
+          <h3 class="card__title">${esc(p.title)}</h3>
+          <span class="card__price">${money(p.price_cents)}</span>
+        </div>
       </article>`;
     }).join('')
     : '<div class="grid__empty">No hay nada por aquí… todavía.</div>';
@@ -371,6 +376,14 @@ function bindEvents() {
       const p = byId(add.dataset.add!)!;
       if (cart.qtyOf(p.id) >= available(p)) return toast('Ya tienes todas las unidades disponibles en la cesta.');
       cart.add(p.id, 1, available(p));
+      add.classList.add('is-added');
+      add.querySelector('.card__add-icon')!.innerHTML = icons.check;
+      add.querySelector('.card__add-label')!.textContent = 'Añadido';
+      setTimeout(() => {
+        add.classList.remove('is-added');
+        add.querySelector('.card__add-icon')!.innerHTML = icons.plus;
+        add.querySelector('.card__add-label')!.textContent = 'Añadir a la cesta';
+      }, 1400);
       toast(`«${p.title}» añadido a la cesta`);
       return;
     }
