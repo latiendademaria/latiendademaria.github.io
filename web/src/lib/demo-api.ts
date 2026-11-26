@@ -145,6 +145,7 @@ export function createDemoApi(): Api {
       return '/gracias.html?demo=1';
     },
 
+    releaseAbandonedCheckout: async () => false,
     currentEmail: () => delay(s.session),
     async sendMagicLink(email) {
       // En demo se entra directamente

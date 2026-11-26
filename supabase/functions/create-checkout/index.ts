@@ -22,6 +22,29 @@ function friendlyError(msg: string): string {
   return 'No se ha podido iniciar el pago. Inténtalo de nuevo.';
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// El cliente volvió a la tienda sin pagar (botón atrás o "cancelar" en Stripe).
+// Se expira primero la sesión en Stripe para que ya no se pueda pagar y después
+// se libera la reserva. Si Stripe dice que ya está pagada, no se toca nada.
+async function release(orderId: string): Promise<{ released: boolean }> {
+  if (!UUID.test(orderId)) return { released: false };
+  const { data: o } = await db.from('orders').select('status, stripe_session_id').eq('id', orderId).single();
+  if (!o || o.status !== 'pending') return { released: false };
+  if (o.stripe_session_id) {
+    try {
+      const s = await getStripe().checkout.sessions.retrieve(o.stripe_session_id);
+      if (s.status === 'complete') return { released: false };
+      if (s.status === 'open') await getStripe().checkout.sessions.expire(o.stripe_session_id);
+    } catch (e) {
+      console.error('release: stripe', e);
+      return { released: false }; // ante la duda no liberamos; caducará sola
+    }
+  }
+  const { error } = await db.rpc('expire_order', { p_order_id: orderId });
+  return { released: !error };
+}
+
 Deno.serve(async (req) => {
   const cors = corsHeaders(req.headers.get('origin'));
   const json = (body: unknown, status = 200) =>
@@ -33,6 +56,7 @@ Deno.serve(async (req) => {
   let items: { product_id: string; qty: number }[];
   try {
     const body = await req.json();
+    if (typeof body.release === 'string') return json(await release(body.release));
     items = (body.items ?? []).map((i: { product_id: unknown; qty: unknown }) => ({
       product_id: String(i.product_id),
       qty: Math.floor(Number(i.qty)),
@@ -78,7 +102,7 @@ Deno.serve(async (req) => {
     });
 
     await db.from('orders').update({ stripe_session_id: session.id }).eq('id', order.order_id);
-    return json({ url: session.url });
+    return json({ url: session.url, order_id: order.order_id });
   } catch (e) {
     console.error('stripe error', e);
     await db.rpc('expire_order', { p_order_id: order.order_id });

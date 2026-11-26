@@ -10,6 +10,8 @@ export interface Api {
   imageUrl(path: string): string;
   /** Devuelve la URL de Stripe Checkout a la que redirigir */
   checkout(lines: CartLine[]): Promise<string>;
+  /** Si el cliente volvió de Stripe sin pagar, libera su reserva. Devuelve true si liberó algo. */
+  releaseAbandonedCheckout(): Promise<boolean>;
 
   // Sesión
   currentEmail(): Promise<string | null>;

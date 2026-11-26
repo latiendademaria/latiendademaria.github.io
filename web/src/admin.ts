@@ -256,12 +256,15 @@ function productsView() {
 function productRow(p: Product) {
   const a = available(p);
   const pill = !p.published ? '<span class="pill pill--off">Oculto</span>'
-    : a === 0 ? '<span class="pill pill--out">Agotado</span>' : '<span class="pill pill--ok">Visible</span>';
+    : p.stock === 0 ? '<span class="pill pill--out">Agotado</span>'
+    : a === 0 ? '<span class="pill pill--paid" title="Todas las unidades están apartadas por pagos en curso">En pago</span>'
+    : '<span class="pill pill--ok">Visible</span>';
   return `<div class="p-row" data-id="${p.id}">
     <img src="${esc(thumb(p))}" alt="">
     <div>
       <div class="p-row__top"><div class="p-row__title">${esc(p.title)}</div>${pill}</div>
-      <div class="p-row__meta">${money(p.price_cents)} · ${esc(catName(p.category_id))}${p.reserved ? ` · ${p.reserved} en pago` : ''}</div>
+      <div class="p-row__meta">${money(p.price_cents)} · ${esc(catName(p.category_id))}</div>
+      ${p.reserved ? `<div class="p-row__reserved">${p.reserved} ${p.reserved === 1 ? 'unidad apartada' : 'unidades apartadas'} por pagos en curso · ${a} a la venta</div>` : ''}
       <div class="p-row__actions">
         <div><span class="stock-lbl">Stock</span>
           <span class="stepper"><button data-stock="-1" aria-label="Quitar una unidad" ${p.stock <= 0 ? 'disabled' : ''}>${icons.minus}</button><span>${p.stock}</span><button data-stock="1" aria-label="Añadir una unidad">${icons.plus}</button></span>
@@ -310,8 +313,9 @@ function openEditor(p?: Product) {
       <div class="field"><label for="f-title">Nombre</label><input class="input" id="f-title" required maxlength="120" value="${esc(p?.title ?? '')}" placeholder="Ej.: Bufanda roja de lana"></div>
       <div class="row2">
         <div class="field"><label for="f-price">Precio (€)</label><input class="input" id="f-price" inputmode="decimal" required value="${p ? centsToInput(p.price_cents) : ''}" placeholder="25,00"></div>
-        <div class="field"><label for="f-stock">Unidades disponibles</label><input class="input" id="f-stock" type="number" inputmode="numeric" min="0" step="1" value="${p?.stock ?? 1}"></div>
+        <div class="field"><label for="f-stock">Unidades en stock</label><input class="input" id="f-stock" type="number" inputmode="numeric" min="0" step="1" value="${p?.stock ?? 1}"></div>
       </div>
+      ${p?.reserved ? `<p class="hint">Ahora mismo hay ${p.reserved} ${p.reserved === 1 ? 'unidad apartada' : 'unidades apartadas'} por clientes que están pagando. Se descuentan del stock solo cuando Stripe confirma el pago; si no pagan, vuelven a estar a la venta en 30 minutos como mucho.</p>` : ''}
       <div class="field"><label for="f-cat">Categoría</label>
         <select class="select" id="f-cat"><option value="">Sin categoría</option>
           ${categories.map((c) => `<option value="${c.id}" ${p?.category_id === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}

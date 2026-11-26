@@ -29,6 +29,8 @@ async function init() {
   }
 
   try {
+    // Si este cliente volvió de Stripe sin pagar, devuelve sus unidades antes de mostrar el stock
+    await api.releaseAbandonedCheckout().catch(() => false);
     [settings, categories, products] = await Promise.all([api.getSettings(), api.listCategories(), api.listProducts()]);
   } catch (e) {
     console.error(e);
@@ -283,6 +285,8 @@ async function checkout(btn: HTMLButtonElement) {
   btn.disabled = true;
   btn.textContent = 'Preparando el pago…';
   try {
+    // Un pago anterior sin terminar de esta misma pestaña no debe seguir apartando unidades
+    await api.releaseAbandonedCheckout().catch(() => false);
     const url = await api.checkout(cart.lines());
     location.href = url;
   } catch (e) {
@@ -351,8 +355,15 @@ function bindEvents() {
   });
 
   window.addEventListener('hashchange', openFromHash);
-  // Al volver con "atrás" desde Stripe, rehabilita el botón
-  window.addEventListener('pageshow', (e) => { if (e.persisted) renderCart(); });
+  // Al volver con "atrás" desde Stripe (página restaurada de caché): libera la reserva y refresca
+  window.addEventListener('pageshow', async (e) => {
+    if (!e.persisted) return;
+    renderCart();
+    if (await api.releaseAbandonedCheckout().catch(() => false)) {
+      products = (await api.listProducts()).filter((p) => p.published);
+      renderGrid(); renderCart();
+    }
+  });
 }
 
 init();

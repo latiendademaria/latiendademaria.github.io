@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { Api } from './api';
 import type { Category, Order, Product, Settings } from './types';
 import { slugify } from './format';
+import { pendingCheckout } from './pending';
 
 const BUCKET = 'product-images';
 
@@ -49,7 +50,15 @@ export function createSupabaseApi(url: string, key: string): Api {
         try { msg = (await error.context.json()).error ?? msg; } catch { /* noop */ }
         throw new Error(msg);
       }
+      if (data.order_id) pendingCheckout.set(data.order_id);
       return data.url as string;
+    },
+    async releaseAbandonedCheckout() {
+      const id = pendingCheckout.get();
+      if (!id) return false;
+      pendingCheckout.clear();
+      const { data } = await sb.functions.invoke('create-checkout', { body: { release: id } });
+      return data?.released === true;
     },
 
     async currentEmail() {
@@ -119,6 +128,8 @@ export function createSupabaseApi(url: string, key: string): Api {
     },
     async updateOrder(id, patch) { ok(await sb.from('orders').update(patch).eq('id', id)); },
     async cancelOrder(id, restock) {
+      // Si el pago sigue abierto en Stripe, ciérralo primero para que ya no se pueda pagar
+      await sb.functions.invoke('create-checkout', { body: { release: id } }).catch(() => null);
       ok(await sb.rpc('admin_cancel_order', { p_order_id: id, p_restock: restock }));
     },
   };

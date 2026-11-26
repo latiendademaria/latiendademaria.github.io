@@ -143,3 +143,5 @@
 .photo__bar button[hidden] { display: grid; visibility: hidden; }
 .photo--add span { display: grid; justify-items: center; gap: 4px; }
 .photo--add svg { margin: 0; }
+
+.p-row__reserved { font-size: .8rem; color: #7a5a14; background: #fbe7bd; border-radius: 8px; padding: 4px 8px; margin: -2px 0 8px; display: inline-block; }
