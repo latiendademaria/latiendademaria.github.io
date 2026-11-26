@@ -88,12 +88,9 @@ function renderStatic() {
 
   const ig = settings.instagram.replace(/^@/, '');
   $('#contact-links').innerHTML = [
-    settings.contact_email && `<a class="btn btn--accent btn--lg" href="${esc(mailto(settings.contact_email))}">${icons.mail} Escríbeme un correo</a>`,
+    settings.contact_email && `<a class="btn btn--accent btn--lg" href="${esc(mailto(settings.contact_email))}">${icons.mail} Enviar un correo</a>`,
     ig && `<a class="btn btn--ghost" href="https://instagram.com/${esc(ig)}" target="_blank" rel="noopener">Instagram @${esc(ig)}</a>`,
   ].filter(Boolean).join('');
-
-  $('#contact-email').innerHTML = settings.contact_email
-    ? `o escribe directamente a <a href="mailto:${esc(settings.contact_email)}">${esc(settings.contact_email)}</a>` : '';
 
   $('#footer').outerHTML = footer(settings.contact_email, settings.instagram);
 }
