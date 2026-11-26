@@ -55,6 +55,13 @@ async function init() {
   }
 }
 
+/** mailto con asunto y una pequeña plantilla para encargos */
+function mailto(to: string) {
+  const subject = 'Encargo especial · La tienda de María';
+  const body = 'Hola María,\n\nMe gustaría encargarte:\n\n- Qué pieza:\n- Colores:\n- Medidas (si aplica):\n- Para cuándo lo necesito:\n\n¡Gracias!';
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 // ── Cinta superior ────────────────────────────────
 function renderRibbon() {
   const free = settings?.free_shipping_from_cents;
@@ -81,9 +88,12 @@ function renderStatic() {
 
   const ig = settings.instagram.replace(/^@/, '');
   $('#contact-links').innerHTML = [
-    settings.contact_email && `<a class="btn" href="mailto:${esc(settings.contact_email)}">${esc(settings.contact_email)}</a>`,
+    settings.contact_email && `<a class="btn btn--accent btn--lg" href="${esc(mailto(settings.contact_email))}">${icons.mail} Escríbeme un correo</a>`,
     ig && `<a class="btn btn--ghost" href="https://instagram.com/${esc(ig)}" target="_blank" rel="noopener">Instagram @${esc(ig)}</a>`,
   ].filter(Boolean).join('');
+
+  $('#contact-email').innerHTML = settings.contact_email
+    ? `o escribe directamente a <a href="mailto:${esc(settings.contact_email)}">${esc(settings.contact_email)}</a>` : '';
 
   $('#footer').outerHTML = footer(settings.contact_email, settings.instagram);
 }

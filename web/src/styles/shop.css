@@ -237,3 +237,7 @@
   .brand__name { font-size: 1.3rem; }
   .shop__head { flex-direction: column; gap: 4px; }
 }
+
+.btn--lg { padding: 1em 1.8em; font-size: 1.05rem; white-space: nowrap; }
+.contact__email { font-size: .9rem !important; margin-top: 14px !important; }
+.contact__email a { color: var(--terracotta-dark); }
