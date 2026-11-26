@@ -19,42 +19,6 @@
   color: var(--terracotta); font-weight: 700; margin-bottom: 14px;
 }
 
-/* ── Hero ───────────────────────────────────────── */
-.hero { padding: clamp(40px, 8vw, 96px) 0 clamp(40px, 6vw, 72px); overflow: hidden; }
-.hero__grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; }
-.hero h1 { font-size: clamp(2.6rem, 7vw, 5.2rem); font-weight: 400; letter-spacing: -.02em; }
-.hero h1 em { font-style: italic; color: var(--terracotta); font-weight: 400; }
-.hero__lead { font-size: 1.1rem; color: var(--muted); max-width: 30em; margin: 22px 0 30px; }
-.hero__art { position: relative; aspect-ratio: 1 / 1; }
-.hero__art .polaroid {
-  position: absolute; width: 52%; background: var(--paper); padding: 10px 10px 34px;
-  border-radius: 6px; box-shadow: var(--shadow-lg); transition: transform .4s ease;
-}
-.hero__art .polaroid img { aspect-ratio: 4 / 5; object-fit: cover; border-radius: 3px; width: 100%; }
-.hero__art .polaroid span {
-  position: absolute; left: 0; right: 0; bottom: 8px; text-align: center;
-  font-family: var(--serif); font-style: italic; font-size: .95rem; color: var(--muted);
-  padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.hero__art .polaroid:nth-child(1) { left: 2%; top: 10%; transform: rotate(-7deg); }
-.hero__art .polaroid:nth-child(2) { right: 0; top: 0; transform: rotate(5deg); z-index: 2; }
-.hero__art .polaroid:nth-child(3) { left: 26%; bottom: -4%; transform: rotate(-1deg); z-index: 3; width: 46%; }
-.hero__art:hover .polaroid:nth-child(1) { transform: rotate(-10deg) translateX(-8px); }
-.hero__art:hover .polaroid:nth-child(2) { transform: rotate(8deg) translateX(8px); }
-.hero__art .thread { position: absolute; inset: -6% -10% auto -10%; width: 120%; pointer-events: none; }
-@media (max-width: 820px) {
-  .hero__grid { grid-template-columns: 1fr; }
-  .hero__art { max-width: 420px; width: 100%; margin: 12px auto 0; }
-}
-
-/* ── Cinta con categorías ───────────────────────── */
-.ribbon { background: var(--sage); color: var(--paper); overflow: hidden; padding: 14px 0; }
-.ribbon__track { display: flex; gap: 40px; width: max-content; animation: marquee 38s linear infinite; }
-.ribbon__track span { font-family: var(--serif); font-style: italic; font-size: 1.25rem; white-space: nowrap; }
-.ribbon__track span::after { content: '✳'; font-style: normal; margin-left: 40px; opacity: .6; font-size: .9rem; }
-@keyframes marquee { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .ribbon__track { animation: none; } }
-
 /* ── Secciones ──────────────────────────────────── */
 .section { padding-top: clamp(56px, 9vw, 104px); scroll-margin-top: 68px; }
 .section__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; margin-bottom: 20px; }
@@ -211,6 +175,65 @@
 .free-ship__bar i { display: block; height: 100%; background: var(--sage); border-radius: inherit; transition: width .3s; }
 .secure { font-size: .8rem; color: var(--muted); text-align: center; margin-top: 10px; }
 
-.hero__yarn { display: grid; place-items: center; height: 100%; }
-.hero__yarn svg { width: 72%; animation: spin 60s linear infinite; }
-@media (prefers-reduced-motion: reduce) { .hero__yarn svg { animation: none; } }
+
+/* ── Cinta superior (fina) ──────────────────────── */
+.ribbon {
+  background: var(--sage); color: var(--paper); overflow: hidden;
+  height: 34px; display: flex; align-items: center;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.ribbon__track { display: flex; width: max-content; animation: marquee 70s linear infinite; }
+.ribbon:hover .ribbon__track { animation-play-state: paused; }
+.ribbon__group { display: flex; }
+.ribbon__group span {
+  font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+  white-space: nowrap; display: inline-flex; align-items: center;
+}
+.ribbon__group span::after {
+  content: ''; width: 4px; height: 4px; border-radius: 50%; background: currentColor;
+  opacity: .5; margin: 0 28px;
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ribbon__track { animation: none; } }
+
+/* ── Cabecera de la tienda ──────────────────────── */
+.shop { padding-top: clamp(24px, 4vw, 44px); scroll-margin-top: 68px; }
+.shop__head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 18px; }
+.shop__title { font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 400; letter-spacing: -.01em; }
+.shop__title em { font-style: italic; color: var(--terracotta); }
+.shop__count { font-size: .85rem; color: var(--muted); white-space: nowrap; }
+
+.filters {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--line);
+}
+.filters .chips { padding: 0; min-width: 0; }
+.filters .segmented { flex: none; }
+@media (max-width: 640px) {
+  .filters { flex-direction: column; align-items: stretch; }
+  .filters .segmented { align-self: flex-start; }
+  .shop__title { font-size: 1.45rem; }
+}
+
+/* ── Esqueleto de carga ─────────────────────────── */
+.card--skeleton { cursor: default; }
+.card--skeleton .card__media, .sk-line {
+  background: linear-gradient(90deg, var(--line) 0%, #f3ebdf 50%, var(--line) 100%);
+  background-size: 200% 100%; animation: shimmer 1.4s ease-in-out infinite; box-shadow: none;
+}
+.sk-line { height: 14px; border-radius: 6px; margin-top: 14px; width: 70%; }
+.sk-line--short { width: 30%; margin-top: 8px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* Móviles pequeños */
+@media (max-width: 640px) {
+  .filters .segmented { align-self: stretch; display: flex; }
+  .filters .segmented button { flex: 1; padding: 6px 8px; }
+}
+@media (max-width: 420px) {
+  .cart-btn { padding: 7px; }
+  .cart-btn__label { display: none; }
+  .brand__name { font-size: 1.3rem; }
+  .shop__head { flex-direction: column; gap: 4px; }
+}

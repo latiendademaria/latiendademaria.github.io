@@ -12,6 +12,7 @@
 </head>
 <body>
   <div id="demo-banner"></div>
+  <div class="ribbon" aria-label="Información de la tienda"><div class="ribbon__track" id="ribbon"></div></div>
 
   <header class="site-header">
     <div class="wrap">
@@ -25,7 +26,7 @@
         </span>
         <button class="cart-btn" id="cart-open" aria-label="Abrir la cesta">
           <span class="cart-btn__icon"></span>
-          <span>Cesta</span>
+          <span class="cart-btn__label">Cesta</span>
           <span class="cart-btn__count" id="cart-count">0</span>
         </button>
       </nav>
@@ -33,33 +34,25 @@
   </header>
 
   <main>
-    <section class="hero">
-      <div class="wrap hero__grid">
-        <div class="hero__copy">
-          <p class="eyebrow">Crochet &amp; limpiapipas · hecho a mano</p>
-          <h1 id="hero-title">Hecho a mano,<br><em>punto a punto.</em></h1>
-          <p class="hero__lead">Bufandas, bolsos y adornos de Navidad tejidos con calma. Cada pieza es pequeña tirada: cuando se acaba, se acaba.</p>
-          <a class="btn btn--accent" href="#tienda">Ver la tienda</a>
-        </div>
-        <div class="hero__art" id="hero-art" aria-hidden="true"></div>
-      </div>
-    </section>
-
-    <div class="ribbon" aria-hidden="true"><div class="ribbon__track" id="ribbon"></div></div>
-
-    <section class="section" id="tienda">
+    <section class="shop" id="tienda">
       <div class="wrap">
-        <div class="section__head">
-          <h2>La tienda</h2>
+        <div class="shop__head">
+          <h1 class="shop__title">Hecho a mano, <em>punto a punto.</em></h1>
+          <span class="shop__count" id="shop-count"></span>
+        </div>
+        <div class="filters">
+          <div class="chips" id="cat-filter" role="group" aria-label="Categorías"></div>
           <div class="segmented" role="group" aria-label="Disponibilidad" id="avail-filter">
             <button data-avail="all" class="is-on">Todo</button>
             <button data-avail="in">Disponible</button>
             <button data-avail="out">Agotado</button>
           </div>
         </div>
-        <div class="chips" id="cat-filter" role="group" aria-label="Categorías"></div>
-        <div class="grid" id="grid" aria-live="polite">
-          <div class="grid__empty">Cargando…</div>
+        <div class="grid" id="grid" aria-live="polite" aria-busy="true">
+          <div class="card card--skeleton"><div class="card__media"></div><div class="sk-line"></div><div class="sk-line sk-line--short"></div></div>
+          <div class="card card--skeleton"><div class="card__media"></div><div class="sk-line"></div><div class="sk-line sk-line--short"></div></div>
+          <div class="card card--skeleton"><div class="card__media"></div><div class="sk-line"></div><div class="sk-line sk-line--short"></div></div>
+          <div class="card card--skeleton"><div class="card__media"></div><div class="sk-line"></div><div class="sk-line sk-line--short"></div></div>
         </div>
       </div>
     </section>
