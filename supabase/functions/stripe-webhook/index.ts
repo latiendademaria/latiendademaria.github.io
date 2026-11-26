@@ -40,7 +40,8 @@ Deno.serve(async (req) => {
   const sig = req.headers.get('stripe-signature');
   if (!sig) return new Response('missing signature', { status: 400 });
 
-  const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+  // Tolerante con espacios, saltos de línea o comillas pegados por error al cargar el secreto
+  const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET')?.trim().replace(/^['"]|['"]$/g, '');
   if (!secret) {
     console.error('STRIPE_WEBHOOK_SECRET no configurada');
     return new Response('not configured', { status: 500 });
