@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" role="img" aria-label="La tienda de María">
+  <defs><clipPath id="ball"><circle cx="44" cy="46" r="30"/></clipPath></defs>
+  <!-- ovillo -->
+  <circle cx="44" cy="46" r="30" fill="#C2553F"/>
+  <g clip-path="url(#ball)" fill="none" stroke="#F6DCCB" stroke-width="3" stroke-linecap="round">
+    <path d="M12 32 C 32 44, 54 44, 78 28"/>
+    <path d="M10 48 C 32 62, 56 62, 80 44"/>
+    <path d="M14 66 C 34 77, 56 74, 76 60"/>
+    <path d="M29 12 C 18 34, 21 58, 38 82"/>
+    <path d="M49 12 C 38 34, 41 58, 58 81"/>
+  </g>
+  <!-- hilo que se escapa y hace un lazo -->
+  <path d="M70 62 C 82 72, 92 78, 104 74 C 116 70, 112 56, 102 60 C 94 64, 100 80, 118 82 L 346 82"
+        fill="none" stroke="#C2553F" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="0"/>
+  <!-- marca -->
+  <text x="122" y="34" font-family="'DM Sans', 'Helvetica Neue', Arial, sans-serif" font-size="13" letter-spacing="3.2" fill="#7A6B62">LA TIENDA DE</text>
+  <text x="120" y="70" font-family="Fraunces, Georgia, serif" font-style="italic" font-weight="600" font-size="42" fill="#2E2622">María</text>
+  <!-- tres puntadas -->
+  <g stroke="#7D8F72" stroke-width="2.4" stroke-linecap="round">
+    <path d="M236 56 l6 -8"/><path d="M246 56 l6 -8"/><path d="M256 56 l6 -8"/>
+  </g>
+</svg>

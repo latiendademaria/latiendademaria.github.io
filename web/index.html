@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La tienda de María · Crochet y adornos hechos a mano</title>
+  <meta name="description" content="Bufandas y bolsos de crochet, árboles de Navidad y adornos de limpiapipas hechos a mano por María.">
+  <meta property="og:title" content="La tienda de María">
+  <meta property="og:description" content="Crochet y adornos hechos a mano, punto a punto.">
+  <meta name="theme-color" content="#FAF4EA">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div id="demo-banner"></div>
+
+  <header class="site-header">
+    <div class="wrap">
+      <span id="brand"></span>
+      <nav class="nav">
+        <span class="nav nav__links">
+          <a href="#tienda">Tienda</a>
+          <a href="#sobre">Sobre mí</a>
+          <a href="#envios">Envíos</a>
+          <a href="#contacto">Contacto</a>
+        </span>
+        <button class="cart-btn" id="cart-open" aria-label="Abrir la cesta">
+          <span class="cart-btn__icon"></span>
+          <span>Cesta</span>
+          <span class="cart-btn__count" id="cart-count">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow">Crochet &amp; limpiapipas · hecho a mano</p>
+          <h1 id="hero-title">Hecho a mano,<br><em>punto a punto.</em></h1>
+          <p class="hero__lead">Bufandas, bolsos y adornos de Navidad tejidos con calma. Cada pieza es pequeña tirada: cuando se acaba, se acaba.</p>
+          <a class="btn btn--accent" href="#tienda">Ver la tienda</a>
+        </div>
+        <div class="hero__art" id="hero-art" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <div class="ribbon" aria-hidden="true"><div class="ribbon__track" id="ribbon"></div></div>
+
+    <section class="section" id="tienda">
+      <div class="wrap">
+        <div class="section__head">
+          <h2>La tienda</h2>
+          <div class="segmented" role="group" aria-label="Disponibilidad" id="avail-filter">
+            <button data-avail="all" class="is-on">Todo</button>
+            <button data-avail="in">Disponible</button>
+            <button data-avail="out">Agotado</button>
+          </div>
+        </div>
+        <div class="chips" id="cat-filter" role="group" aria-label="Categorías"></div>
+        <div class="grid" id="grid" aria-live="polite">
+          <div class="grid__empty">Cargando…</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sobre">
+      <div class="wrap">
+        <div class="about">
+          <div class="about__mark" id="about-mark"></div>
+          <div>
+            <p class="eyebrow">Sobre mí</p>
+            <h2>Hola, soy María.</h2>
+            <div class="about__text" id="about-text"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="envios">
+      <div class="wrap">
+        <div class="section__head"><h2>Envíos y devoluciones</h2></div>
+        <div class="info-cards">
+          <article class="info-card">
+            <span class="info-card__num">01</span>
+            <h3>Envío</h3>
+            <p id="ship-text">Envío a España peninsular.</p>
+          </article>
+          <article class="info-card">
+            <span class="info-card__num">02</span>
+            <h3>Plazos</h3>
+            <p>Preparo tu pedido con mimo y sale en 3–5 días laborables tras el pago, bien protegido.</p>
+          </article>
+          <article class="info-card">
+            <span class="info-card__num">03</span>
+            <h3>Devoluciones</h3>
+            <p>Tienes 14 días desde que lo recibes para devolverlo. Los colores pueden variar ligeramente respecto a la foto.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contacto">
+      <div class="wrap contact">
+        <h2>¿Buscas un color concreto<br>o un encargo especial?</h2>
+        <p>Escríbeme y lo hablamos.</p>
+        <div class="contact__links" id="contact-links"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <!-- Detalle de producto -->
+  <dialog class="modal" id="product-modal" aria-labelledby="pm-title"></dialog>
+
+  <!-- Cesta -->
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="drawer" id="cart-drawer" aria-label="Cesta" aria-hidden="true" inert>
+    <header class="drawer__head">
+      <h2>Tu cesta</h2>
+      <button class="icon-btn" id="cart-close" aria-label="Cerrar la cesta"></button>
+    </header>
+    <div class="drawer__body" id="cart-body"></div>
+    <footer class="drawer__foot" id="cart-foot"></footer>
+  </aside>
+
+  <script type="module" src="/src/shop.ts"></script>
+</body>
+</html>
