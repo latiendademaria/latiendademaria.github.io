@@ -210,3 +210,7 @@
 .free-ship__bar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; margin-top: 6px; }
 .free-ship__bar i { display: block; height: 100%; background: var(--sage); border-radius: inherit; transition: width .3s; }
 .secure { font-size: .8rem; color: var(--muted); text-align: center; margin-top: 10px; }
+
+.hero__yarn { display: grid; place-items: center; height: 100%; }
+.hero__yarn svg { width: 72%; animation: spin 60s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .hero__yarn svg { animation: none; } }

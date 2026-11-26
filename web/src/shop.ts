@@ -56,7 +56,7 @@ async function init() {
 function renderStatic() {
   // Hero: tres fotos tipo polaroid
   const featured = products.filter((p) => p.images.length).slice(0, 3);
-  $('#hero-art').innerHTML = `
+  $('#hero-art').innerHTML = featured.length < 2 ? `<div class="hero__yarn">${yarnMark}</div>` : `
     ${featured.map((p) => `<figure class="polaroid"><img src="${esc(img(p))}" alt=""><span>${esc(p.title)}</span></figure>`).join('')}
     <svg class="thread" viewBox="0 0 600 200" fill="none"><path d="M0 120 C 120 20, 200 200, 320 90 S 520 30, 600 110" stroke="#C2553F" stroke-width="2" stroke-dasharray="2 8" stroke-linecap="round"/></svg>`;
 
