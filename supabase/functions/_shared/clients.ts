@@ -1,9 +1,14 @@
 import Stripe from 'npm:stripe@17.7.0';
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
-export const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  httpClient: Stripe.createFetchHttpClient(),
-});
+// Se crea al primer uso: sin clave la función arranca y responde con un error claro
+let _stripe: Stripe | null = null;
+export function getStripe(): Stripe {
+  const key = Deno.env.get('STRIPE_SECRET_KEY');
+  if (!key) throw new Error('STRIPE_SECRET_KEY no configurada');
+  _stripe ??= new Stripe(key, { httpClient: Stripe.createFetchHttpClient() });
+  return _stripe;
+}
 
 export const cryptoProvider = Stripe.createSubtleCryptoProvider();
 

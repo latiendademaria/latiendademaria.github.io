@@ -4,9 +4,8 @@
 //   checkout.session.async_payment_failed
 //   checkout.session.expired
 import type Stripe from 'npm:stripe@17.7.0';
-import { cryptoProvider, db, stripe } from '../_shared/clients.ts';
+import { cryptoProvider, db, getStripe } from '../_shared/clients.ts';
 
-const WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
 
 async function markPaid(s: Stripe.Checkout.Session) {
   const orderId = s.metadata?.order_id ?? s.client_reference_id;
@@ -41,10 +40,16 @@ Deno.serve(async (req) => {
   const sig = req.headers.get('stripe-signature');
   if (!sig) return new Response('missing signature', { status: 400 });
 
+  const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+  if (!secret) {
+    console.error('STRIPE_WEBHOOK_SECRET no configurada');
+    return new Response('not configured', { status: 500 });
+  }
+
   let event: Stripe.Event;
   try {
-    event = await stripe.webhooks.constructEventAsync(
-      await req.text(), sig, WEBHOOK_SECRET, undefined, cryptoProvider,
+    event = await getStripe().webhooks.constructEventAsync(
+      await req.text(), sig, secret, undefined, cryptoProvider,
     );
   } catch (e) {
     console.error('bad signature', e);

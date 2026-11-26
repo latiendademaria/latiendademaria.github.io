@@ -1,6 +1,6 @@
 // POST { items: [{ product_id, qty }] } → { url }
 // Reserva stock, crea pedido pendiente y abre una sesión de Stripe Checkout.
-import { corsHeaders, db, SITE_URL, stripe } from '../_shared/clients.ts';
+import { corsHeaders, db, getStripe, SITE_URL } from '../_shared/clients.ts';
 
 type Line = { product_id: string; title: string; qty: number; unit_price_cents: number; image: string | null };
 
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
 
   const lines = order.items as Line[];
   try {
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
       locale: 'es',
       client_reference_id: order.order_id,
